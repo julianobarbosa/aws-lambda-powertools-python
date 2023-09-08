@@ -32,7 +32,9 @@ from tests.functional.utils import load_event
 
 
 def read_media(file_name: str) -> bytes:
-    path = Path(str(Path(__file__).parent.parent.parent.parent) + "/docs/media/" + file_name)
+    path = Path(
+        f"{str(Path(__file__).parent.parent.parent.parent)}/docs/media/{file_name}"
+    )
     return path.read_bytes()
 
 

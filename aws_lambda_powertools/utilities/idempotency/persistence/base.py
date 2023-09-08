@@ -286,8 +286,7 @@ class BasePersistenceLayer(ABC):
     def _retrieve_from_cache(self, idempotency_key: str):
         if not self.use_local_cache:
             return
-        cached_record = self._cache.get(key=idempotency_key)
-        if cached_record:
+        if cached_record := self._cache.get(key=idempotency_key):
             if not cached_record.is_expired:
                 return cached_record
             logger.debug(f"Removing expired local cache record for idempotency key: {idempotency_key}")
@@ -395,8 +394,9 @@ class BasePersistenceLayer(ABC):
 
         idempotency_key = self._get_hashed_idempotency_key(data=data)
 
-        cached_record = self._retrieve_from_cache(idempotency_key=idempotency_key)
-        if cached_record:
+        if cached_record := self._retrieve_from_cache(
+            idempotency_key=idempotency_key
+        ):
             logger.debug(f"Idempotency record found in cache with idempotency key: {idempotency_key}")
             self._validate_payload(data=data, data_record=cached_record)
             return cached_record

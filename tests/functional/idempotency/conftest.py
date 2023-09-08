@@ -148,7 +148,7 @@ def expected_params_put_item_with_validation(hashed_idempotency_key, hashed_vali
 def hashed_idempotency_key(lambda_apigw_event, default_jmespath, lambda_context):
     compiled_jmespath = jmespath.compile(default_jmespath)
     data = compiled_jmespath.search(lambda_apigw_event)
-    return "test-func#" + hashlib.md5(serialize(data).encode()).hexdigest()
+    return f"test-func#{hashlib.md5(serialize(data).encode()).hexdigest()}"
 
 
 @pytest.fixture
@@ -156,7 +156,7 @@ def hashed_idempotency_key_with_envelope(lambda_apigw_event):
     event = extract_data_from_envelope(
         data=lambda_apigw_event, envelope=envelopes.API_GATEWAY_HTTP, jmespath_options={}
     )
-    return "test-func#" + hashlib.md5(serialize(event).encode()).hexdigest()
+    return f"test-func#{hashlib.md5(serialize(event).encode()).hexdigest()}"
 
 
 @pytest.fixture

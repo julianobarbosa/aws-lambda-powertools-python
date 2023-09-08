@@ -440,9 +440,7 @@ class APIGatewayAuthorizerResponse:
         if not self._resource_pattern.match(resource):
             raise ValueError(f"Invalid resource path: {resource}. Path should match {self.path_regex}")
 
-        if resource[:1] == "/":
-            resource = resource[1:]
-
+        resource = resource.removeprefix("/")
         resource_arn = APIGatewayRouteArn(
             self.region, self.aws_account_id, self.api_id, self.stage, http_method, resource
         ).arn

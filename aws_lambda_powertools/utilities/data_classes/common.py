@@ -13,10 +13,7 @@ class DictWrapper:
         return self._data[key]
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, DictWrapper):
-            return False
-
-        return self._data == other._data
+        return self._data == other._data if isinstance(other, DictWrapper) else False
 
     def get(self, key: str) -> Optional[Any]:
         return self._data.get(key)

@@ -414,10 +414,7 @@ class Logger(logging.Logger):  # lgtm [py/missing-call-to-init]
             return level
 
         log_level: Optional[str] = level or os.getenv("LOG_LEVEL")
-        if log_level is None:
-            return logging.INFO
-
-        return log_level.upper()
+        return logging.INFO if log_level is None else log_level.upper()
 
     @staticmethod
     def _get_caller_filename():

@@ -742,7 +742,7 @@ def test_default_no_raise_on_missing_idempotency_key(
     hashed_key = persistence_store._get_hashed_idempotency_key({})
 
     # THEN return the hash of None
-    expected_value = "test-func#" + md5(serialize(None).encode()).hexdigest()
+    expected_value = f"test-func#{md5(serialize(None).encode()).hexdigest()}"
     assert expected_value == hashed_key
 
 
@@ -793,7 +793,10 @@ def test_jmespath_with_powertools_json(
     result = persistence_store._get_hashed_idempotency_key(api_gateway_proxy_event)
 
     # THEN the hashed idempotency key should match the extracted values generated hash
-    assert result == "test-func#" + persistence_store._generate_hash(expected_value)
+    assert (
+        result
+        == f"test-func#{persistence_store._generate_hash(expected_value)}"
+    )
 
 
 @pytest.mark.parametrize("config_with_jmespath_options", ["powertools_json(data).payload"], indirect=True)
@@ -870,7 +873,9 @@ class MockPersistenceLayer(BasePersistenceLayer):
 def test_idempotent_lambda_event_source(lambda_context):
     # Scenario to validate that we can use the event_source decorator before or after the idempotent decorator
     mock_event = load_event("apiGatewayProxyV2Event.json")
-    persistence_layer = MockPersistenceLayer("test-func#" + hashlib.md5(serialize(mock_event).encode()).hexdigest())
+    persistence_layer = MockPersistenceLayer(
+        f"test-func#{hashlib.md5(serialize(mock_event).encode()).hexdigest()}"
+    )
     expected_result = {"message": "Foo"}
 
     # GIVEN an event_source decorator
@@ -890,7 +895,9 @@ def test_idempotent_lambda_event_source(lambda_context):
 def test_idempotent_function():
     # Scenario to validate we can use idempotent_function with any function
     mock_event = {"data": "value"}
-    persistence_layer = MockPersistenceLayer("test-func#" + hashlib.md5(serialize(mock_event).encode()).hexdigest())
+    persistence_layer = MockPersistenceLayer(
+        f"test-func#{hashlib.md5(serialize(mock_event).encode()).hexdigest()}"
+    )
     expected_result = {"message": "Foo"}
 
     @idempotent_function(persistence_store=persistence_layer, data_keyword_argument="record")
@@ -907,7 +914,9 @@ def test_idempotent_function_arbitrary_args_kwargs():
     # Scenario to validate we can use idempotent_function with a function
     # with an arbitrary number of args and kwargs
     mock_event = {"data": "value"}
-    persistence_layer = MockPersistenceLayer("test-func#" + hashlib.md5(serialize(mock_event).encode()).hexdigest())
+    persistence_layer = MockPersistenceLayer(
+        f"test-func#{hashlib.md5(serialize(mock_event).encode()).hexdigest()}"
+    )
     expected_result = {"message": "Foo"}
 
     @idempotent_function(persistence_store=persistence_layer, data_keyword_argument="record")
@@ -922,7 +931,9 @@ def test_idempotent_function_arbitrary_args_kwargs():
 
 def test_idempotent_function_invalid_data_kwarg():
     mock_event = {"data": "value"}
-    persistence_layer = MockPersistenceLayer("test-func#" + hashlib.md5(serialize(mock_event).encode()).hexdigest())
+    persistence_layer = MockPersistenceLayer(
+        f"test-func#{hashlib.md5(serialize(mock_event).encode()).hexdigest()}"
+    )
     expected_result = {"message": "Foo"}
     keyword_argument = "payload"
 
@@ -939,7 +950,9 @@ def test_idempotent_function_invalid_data_kwarg():
 
 def test_idempotent_function_arg_instead_of_kwarg():
     mock_event = {"data": "value"}
-    persistence_layer = MockPersistenceLayer("test-func#" + hashlib.md5(serialize(mock_event).encode()).hexdigest())
+    persistence_layer = MockPersistenceLayer(
+        f"test-func#{hashlib.md5(serialize(mock_event).encode()).hexdigest()}"
+    )
     expected_result = {"message": "Foo"}
     keyword_argument = "record"
 
@@ -957,7 +970,9 @@ def test_idempotent_function_arg_instead_of_kwarg():
 def test_idempotent_function_and_lambda_handler(lambda_context):
     # Scenario to validate we can use both idempotent_function and idempotent decorators
     mock_event = {"data": "value"}
-    persistence_layer = MockPersistenceLayer("test-func#" + hashlib.md5(serialize(mock_event).encode()).hexdigest())
+    persistence_layer = MockPersistenceLayer(
+        f"test-func#{hashlib.md5(serialize(mock_event).encode()).hexdigest()}"
+    )
     expected_result = {"message": "Foo"}
 
     @idempotent_function(persistence_store=persistence_layer, data_keyword_argument="record")
@@ -985,7 +1000,9 @@ def test_idempotent_data_sorting():
     data_two = {"more_data": "more data 1", "data": "test message 1"}
 
     # Assertion will happen in MockPersistenceLayer
-    persistence_layer = MockPersistenceLayer("test-func#" + hashlib.md5(json.dumps(data_one).encode()).hexdigest())
+    persistence_layer = MockPersistenceLayer(
+        f"test-func#{hashlib.md5(json.dumps(data_one).encode()).hexdigest()}"
+    )
 
     # GIVEN
     @idempotent_function(data_keyword_argument="payload", persistence_store=persistence_layer)

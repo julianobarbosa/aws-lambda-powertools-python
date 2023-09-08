@@ -203,10 +203,14 @@ class CodePipelineJobEvent(DictWrapper):
         CodePipelineArtifact, None
             Matching CodePipelineArtifact if found
         """
-        for artifact in self.data.input_artifacts:
-            if artifact.name == artifact_name:
-                return artifact
-        return None
+        return next(
+            (
+                artifact
+                for artifact in self.data.input_artifacts
+                if artifact.name == artifact_name
+            ),
+            None,
+        )
 
     def get_artifact(self, artifact_name: str, filename: str) -> Optional[str]:
         """Get a file within an artifact zip on s3

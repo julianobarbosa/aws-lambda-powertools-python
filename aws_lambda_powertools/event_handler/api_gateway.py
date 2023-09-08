@@ -446,10 +446,7 @@ class ApiGatewayResolver:
 
         def register_resolver(func: Callable):
             logger.debug(f"Adding route using rule {rule} and method {method.upper()}")
-            if cors is None:
-                cors_enabled = self._cors_enabled
-            else:
-                cors_enabled = cors
+            cors_enabled = self._cors_enabled if cors is None else cors
             self._routes.append(Route(method, self._compile_regex(rule), func, cors_enabled, compress, cache_control))
             if cors_enabled:
                 logger.debug(f"Registering method {method.upper()} to Allow Methods in CORS")
@@ -512,7 +509,7 @@ class ApiGatewayResolver:
         NOTE: See #520 for context
         """
         rule_regex: str = re.sub(_DYNAMIC_ROUTE_PATTERN, _NAMED_GROUP_BOUNDARY_PATTERN, rule)
-        return re.compile("^{}$".format(rule_regex))
+        return re.compile(f"^{rule_regex}$")
 
     def _to_proxy_event(self, event: Dict) -> BaseProxyEvent:
         """Convert the event dict to the corresponding data class"""
@@ -532,8 +529,7 @@ class ApiGatewayResolver:
         for route in self._routes:
             if method != route.method:
                 continue
-            match_results: Optional[re.Match] = route.rule.match(path)
-            if match_results:
+            if match_results := route.rule.match(path):
                 logger.debug("Found a registered route. Calling function")
                 return self._call_route(route, match_results.groupdict())  # pass fn args
 
@@ -556,17 +552,17 @@ class ApiGatewayResolver:
     @staticmethod
     def _path_starts_with(path: str, prefix: str):
         """Returns true if the `path` starts with a prefix plus a `/`"""
-        if not isinstance(prefix, str) or len(prefix) == 0:
+        if not isinstance(prefix, str) or not prefix:
             return False
 
-        return path.startswith(prefix + "/")
+        return path.startswith(f"{prefix}/")
 
     def _not_found(self, method: str) -> ResponseBuilder:
         """Called when no matching route was found and includes support for the cors preflight response"""
         headers = {}
         if self._cors:
             logger.debug("CORS is enabled, updating headers.")
-            headers.update(self._cors.to_dict())
+            headers |= self._cors.to_dict()
 
             if method == "OPTIONS":
                 logger.debug("Pre-flight request detected. Returning CORS with null response")

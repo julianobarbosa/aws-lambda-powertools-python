@@ -507,7 +507,7 @@ def test_logger_append_remove_keys(stdout, service_name):
     extra_keys_log, keys_removed_log = capture_multiple_logging_statements_output(stdout)
 
     assert extra_keys.items() <= extra_keys_log.items()
-    assert (extra_keys.items() <= keys_removed_log.items()) is False
+    assert extra_keys.items() > keys_removed_log.items()
 
 
 def test_logger_custom_formatter(stdout, service_name, lambda_context):

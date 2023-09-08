@@ -602,7 +602,6 @@ def test_log_metrics_with_metadata(capsys, metric, dimension, namespace, service
     @my_metrics.log_metrics
     def lambda_handler(evt, ctx):
         my_metrics.add_metadata(**metadata)
-        pass
 
     lambda_handler({}, {})
 

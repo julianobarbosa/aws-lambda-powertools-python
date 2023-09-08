@@ -718,9 +718,9 @@ class Tracer:
         """
         logger.debug("Verifying whether Tracing has been disabled")
         is_lambda_env = os.getenv(constants.LAMBDA_TASK_ROOT_ENV)
-        is_disabled = resolve_truthy_env_var_choice(env=os.getenv(constants.TRACER_DISABLED_ENV, "false"))
-
-        if is_disabled:
+        if is_disabled := resolve_truthy_env_var_choice(
+            env=os.getenv(constants.TRACER_DISABLED_ENV, "false")
+        ):
             logger.debug("Tracing has been disabled via env var POWERTOOLS_TRACE_DISABLED")
             return is_disabled
 

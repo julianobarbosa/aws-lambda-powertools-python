@@ -10,8 +10,10 @@ PREFILL_CACHE_ITEMS = 50
 
 @pytest.fixture
 def populated_cache():
-    cache_dict = LRUDict(max_items=MAX_CACHE_ITEMS, **{f"key_{i}": f"val_{i}" for i in range(0, PREFILL_CACHE_ITEMS)})
-    return cache_dict
+    return LRUDict(
+        max_items=MAX_CACHE_ITEMS,
+        **{f"key_{i}": f"val_{i}" for i in range(0, PREFILL_CACHE_ITEMS)},
+    )
 
 
 def test_cache_order_init(populated_cache):

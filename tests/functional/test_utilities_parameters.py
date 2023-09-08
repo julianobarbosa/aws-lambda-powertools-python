@@ -265,7 +265,7 @@ def test_dynamodb_provider_get_multiple_auto(mock_name, mock_value, config):
         stubber.assert_no_pending_responses()
 
         assert len(values) == len(mock_params)
-        for key in mock_params.keys():
+        for key in mock_params:
             assert key in values
             if key.endswith(".json"):
                 assert values[key][mock_name] == mock_value

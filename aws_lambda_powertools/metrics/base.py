@@ -123,7 +123,7 @@ class MetricManager:
         unit = self.__extract_metric_unit_value(unit=unit)
         metric: Dict = self.metric_set.get(name, defaultdict(list))
         metric["Unit"] = unit
-        metric["Value"].append(float(value))
+        metric["Value"].append(value)
         logger.debug(f"Adding metric: {name} with {metric}")
         self.metric_set[name] = metric
 
@@ -197,7 +197,7 @@ class MetricManager:
             metric_unit: str = metric.get("Unit", "")
 
             metric_names_and_units.append({"Name": metric_name, "Unit": metric_unit})
-            metric_names_and_values.update({metric_name: metric_value})
+            metric_names_and_values[metric_name] = metric_value
 
         return {
             "_aws": {
@@ -239,7 +239,7 @@ class MetricManager:
         # Cast value to str according to EMF spec
         # Majority of values are expected to be string already, so
         # checking before casting improves performance in most cases
-        self.dimension_set[name] = value if isinstance(value, str) else str(value)
+        self.dimension_set[name] = value
 
     def add_metadata(self, key: str, value: Any):
         """Adds high cardinal metadata for metrics object
@@ -265,13 +265,7 @@ class MetricManager:
         """
         logger.debug(f"Adding metadata: {key}:{value}")
 
-        # Cast key to str according to EMF spec
-        # Majority of keys are expected to be string already, so
-        # checking before casting improves performance in most cases
-        if isinstance(key, str):
-            self.metadata_set[key] = value
-        else:
-            self.metadata_set[str(key)] = value
+        self.metadata_set[key] = value
 
     def __extract_metric_unit_value(self, unit: Union[str, MetricUnit]) -> str:
         """Return metric value from metric unit whether that's str or MetricUnit enum

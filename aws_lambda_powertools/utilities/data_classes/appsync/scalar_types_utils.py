@@ -29,8 +29,9 @@ def _formatted_time(now: datetime.date, fmt: str, timezone_offset: int) -> str:
     if timezone_offset == 0:
         postfix = "Z"
     else:
-        postfix = "+" if timezone_offset > 0 else "-"
-        postfix += str(abs(timezone_offset)).zfill(2)
+        postfix = ("+" if timezone_offset > 0 else "-") + str(
+            abs(timezone_offset)
+        ).zfill(2)
         postfix += ":00:00"
 
     return datetime_str + postfix

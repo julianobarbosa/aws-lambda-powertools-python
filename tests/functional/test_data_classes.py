@@ -1307,7 +1307,9 @@ def test_aws_time_utc():
 
 def test_aws_datetime_utc():
     datetime_str = aws_datetime()
-    assert datetime.datetime.strptime(datetime_str[:-1] + "000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+    assert datetime.datetime.strptime(
+        f"{datetime_str[:-1]}000Z", "%Y-%m-%dT%H:%M:%S.%fZ"
+    )
 
 
 def test_format_time_to_milli():
@@ -1613,4 +1615,4 @@ def test_api_gateway_route_arn_parser():
     arn = "arn:aws:execute-api:us-west-2:123456789012:ymy8tbxw7b/*/GET"
     details = parse_api_gateway_arn(arn)
     assert details.resource == ""
-    assert details.arn == arn + "/"
+    assert details.arn == f"{arn}/"

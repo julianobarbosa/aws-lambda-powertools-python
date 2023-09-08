@@ -157,10 +157,12 @@ class AppSyncResolver:
             callable function and configuration
         """
         full_name = f"{type_name}.{field_name}"
-        resolver = self._resolvers.get(full_name, self._resolvers.get(f"*.{field_name}"))
-        if not resolver:
+        if resolver := self._resolvers.get(
+            full_name, self._resolvers.get(f"*.{field_name}")
+        ):
+            return resolver["func"]
+        else:
             raise ValueError(f"No resolver found for '{full_name}'")
-        return resolver["func"]
 
     def __call__(
         self, event: dict, context: LambdaContext, data_model: Type[AppSyncResolverEvent] = AppSyncResolverEvent

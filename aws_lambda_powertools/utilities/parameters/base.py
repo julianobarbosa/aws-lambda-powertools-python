@@ -209,10 +209,14 @@ def get_transform_method(key: str, transform: Optional[str] = None) -> Optional[
     if transform != "auto":
         return transform
 
-    for transform_method in SUPPORTED_TRANSFORM_METHODS:
-        if key.endswith("." + transform_method):
-            return transform_method
-    return None
+    return next(
+        (
+            transform_method
+            for transform_method in SUPPORTED_TRANSFORM_METHODS
+            if key.endswith(f".{transform_method}")
+        ),
+        None,
+    )
 
 
 def transform_value(value: str, transform: str, raise_on_transform_error: bool = True) -> Union[dict, bytes, None]:
